@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Blog | BBY Tech{% endblock %}
+{% block description %}Artigos, tutoriais e conhecimento sobre desenvolvimento web e tecnologia.{% endblock %}
+
+{% block body %}
+    <section class="pt-32 pb-20 px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="mb-12 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+                    Blog <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">BBY Tech</span>
+                </h1>
+                <p class="text-lg text-slate-400">
+                    Compartilhando conhecimento, tutoriais e experiências sobre desenvolvimento web
+                </p>
+            </div>
+
+            <div class="space-y-6">
+                {% for post in posts %}
+                    <article class="bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-indigo-500 transition-all duration-300 group">
+                        <div class="flex justify-between items-start mb-3">
+                            <h2 class="text-2xl font-bold text-white group-hover:text-indigo-400 transition-colors">
+                                <a href="{{ path('app_blog_post', {slug: post.slug}) }}">{{ post.title }}</a>
+                            </h2>
+                            <time datetime="{{ post.date|date('Y-m-d') }}" class="text-sm text-slate-500">
+                                {{ post.date|date('d/m/Y') }}
+                            </time>
+                        </div>
+                        
+                        <p class="text-slate-400 mb-4 leading-relaxed">{{ post.excerpt }}</p>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-slate-500">Por {{ post.author }}</span>
+                            <a href="{{ path('app_blog_post', {slug: post.slug}) }}" 
+                               class="inline-flex items-center text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
+                                Ler mais
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
+                {% else %}
+                    <div class="text-center py-12">
+                        <p class="text-slate-400 text-lg">Nenhum post publicado ainda. Volte em breve!</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

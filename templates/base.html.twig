@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BBY Tech | Bufon By Technology{% endblock %}</title>
+    <meta name="description" content="{% block description %}Portfolio de projetos de Jonathan Bufon. Inovação e desenvolvimento web.{% endblock %}">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Prose styles for blog posts */
+        .prose { max-width: 65ch; }
+        .prose h2 { color: #f1f5f9; font-size: 1.875rem; font-weight: 700; margin-top: 2em; margin-bottom: 1em; }
+        .prose h3 { color: #f1f5f9; font-size: 1.5rem; font-weight: 600; margin-top: 1.6em; margin-bottom: 0.6em; }
+        .prose p { margin-bottom: 1.25em; line-height: 1.75; }
+        .prose ul, .prose ol { margin-top: 1.25em; margin-bottom: 1.25em; padding-left: 1.625em; }
+        .prose li { margin-top: 0.5em; margin-bottom: 0.5em; }
+        .prose code { background-color: rgba(100, 116, 139, 0.2); padding: 0.2em 0.4em; border-radius: 0.25rem; font-size: 0.875em; }
+        .prose pre { background-color: rgba(15, 23, 42, 0.8); padding: 1em; border-radius: 0.5rem; overflow-x: auto; margin: 1.5em 0; }
+        .prose a { color: #818cf8; text-decoration: none; }
+        .prose a:hover { color: #a5b4fc; text-decoration: underline; }
+        .prose strong { color: #f1f5f9; font-weight: 600; }
+        .prose blockquote { border-left: 4px solid #6366f1; padding-left: 1em; font-style: italic; color: #cbd5e1; }
+        
+        /* Lightbox styles */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            cursor: zoom-out;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        
+        .lightbox-overlay.active {
+            display: flex;
+        }
+        
+        .lightbox-image {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 0.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: zoomIn 0.2s ease-in-out;
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 300;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            line-height: 1;
+            padding-bottom: 0.2rem;
+        }
+        
+        .lightbox-close:hover {
+            background: rgba(239, 68, 68, 0.8);
+            transform: rotate(90deg);
+        }
+        
+        .image-zoom-cursor {
+            cursor: zoom-in;
+            transition: transform 0.2s;
+        }
+        
+        .image-zoom-cursor:hover {
+            transform: scale(1.02);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes zoomIn {
+            from { 
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to { 
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Contact modal */
+        .contact-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(15, 23, 42, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            padding: 1.5rem;
+        }
+
+        .contact-modal-overlay.active {
+            display: flex;
+        }
+
+        .contact-modal-card {
+            background-color: #0f172a;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            width: 100%;
+            max-width: 28rem;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.7);
+            position: relative;
+        }
+
+        .contact-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: #e2e8f0;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            border-radius: 999px;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .contact-modal-close:hover {
+            background: rgba(99, 102, 241, 0.2);
+            color: #6366f1;
+        }
+
+        .contact-modal-card h3 {
+            color: #f8fafc;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .contact-modal-card p {
+            color: #cbd5f5;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-link-list a {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: #e2e8f0;
+            text-decoration: none;
+            transition: border-color 0.2s, color 0.2s, transform 0.2s;
+        }
+
+        .contact-link-list a:hover {
+            border-color: #6366f1;
+            color: #a5b4fc;
+            transform: translateY(-1px);
+        }
+    </style>
+    
+    {% block stylesheets %}
+    {% endblock %}
+
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+</head>
+<body class="bg-slate-900 text-slate-300 antialiased selection:bg-indigo-500 selection:text-white">
+    {{ component('Navbar') }}
+    
+    {% block body %}{% endblock %}
+    
+    {{ component('Footer') }}
+    
+    {# Lightbox Overlay #}
+    <div id="lightbox" class="lightbox-overlay">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <img id="lightbox-img" class="lightbox-image" src="" alt="">
+    </div>
+
+    {# Contact Modal #}
+    <div id="contact-modal" class="contact-modal-overlay" aria-hidden="true">
+        <div class="contact-modal-card">
+            <button class="contact-modal-close" type="button" aria-label="Fechar modal" onclick="closeContactModal()">&times;</button>
+            <h3>Entre em contato</h3>
+            <p class="text-sm text-slate-400 mb-4">Disponível para parcerias, freelas e networking.</p>
+
+            <div class="mb-6">
+                <p class="text-xs tracking-wide text-slate-500 uppercase mb-1">Email</p>
+                <a id="contact-email" href="mailto:suporte@bbytech.com.br" class="text-indigo-300 font-semibold">suporte@bbytech.com.br</a>
+            </div>
+
+            <div>
+                <p class="text-xs tracking-wide text-slate-500 uppercase mb-2">Redes</p>
+                <div id="contact-links" class="contact-link-list space-y-3">
+                    <a href="https://www.linkedin.com/in/jonathan-bufon-892287247/" target="_blank" rel="noopener noreferrer">
+                        LinkedIn
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Função para abrir lightbox
+        function openLightbox(imgElement) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            
+            lightboxImg.src = imgElement.src;
+            lightboxImg.alt = imgElement.alt;
+            lightbox.classList.add('active');
+            
+            // Prevenir scroll do body
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Função para fechar lightbox
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            
+            // Restaurar scroll do body
+            document.body.style.overflow = '';
+        }
+        
+        // Fechar ao clicar no overlay (fora da imagem)
+        document.getElementById('lightbox').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLightbox();
+            }
+        });
+        
+        // Fechar com ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+        
+        // Adicionar cursor e evento de click em todas as imagens dos posts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Seleciona apenas imagens dentro de <figure> (imagens do post, não logos/ícones)
+            const postImages = document.querySelectorAll('figure img');
+            
+            postImages.forEach(function(img) {
+                img.classList.add('image-zoom-cursor');
+                img.addEventListener('click', function() {
+                    openLightbox(this);
+                });
+            });
+
+            // Contato
+            initContactModal();
+        });
+
+        let contactDataCache = null;
+
+        function initContactModal() {
+            const contactModal = document.getElementById('contact-modal');
+            const emailEl = document.getElementById('contact-email');
+            const linksEl = document.getElementById('contact-links');
+            const triggers = document.querySelectorAll('[data-contact-trigger]');
+
+            triggers.forEach(function(trigger) {
+                trigger.addEventListener('click', async function() {
+                    const endpoint = trigger.dataset.contactEndpoint;
+                    await loadContactData(endpoint, emailEl, linksEl);
+                    openContactModal(contactModal);
+                });
+            });
+
+            contactModal.addEventListener('click', function(e) {
+                if (e.target === contactModal) {
+                    closeContactModal();
+                }
+            });
+        }
+
+        async function loadContactData(endpoint, emailEl, linksEl) {
+            if (!contactDataCache) {
+                try {
+                    const response = await fetch(endpoint);
+                    if (!response.ok) {
+                        throw new Error('Erro ao carregar dados de contato');
+                    }
+                    contactDataCache = await response.json();
+                } catch (error) {
+                    console.error(error);
+                    contactDataCache = {
+                        email: 'suporte@bbytech.com.br',
+                        links: [
+                            { label: 'LinkedIn', url: 'https://www.linkedin.com/in/jonathan-bufon-892287247/' }
+                        ]
+                    };
+                }
+            }
+
+            emailEl.textContent = contactDataCache.email;
+            emailEl.href = `mailto:${contactDataCache.email}`;
+
+            linksEl.innerHTML = '';
+            contactDataCache.links.forEach(function(link) {
+                const anchor = document.createElement('a');
+                anchor.href = link.url;
+                anchor.target = '_blank';
+                anchor.rel = 'noopener noreferrer';
+                anchor.textContent = link.label;
+                linksEl.appendChild(anchor);
+            });
+        }
+
+        function openContactModal(modalEl) {
+            modalEl.classList.add('active');
+            modalEl.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeContactModal() {
+            const modalEl = document.getElementById('contact-modal');
+            modalEl.classList.remove('active');
+            modalEl.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeContactModal();
+            }
+        });
+    </script>
+</body>
+</html>

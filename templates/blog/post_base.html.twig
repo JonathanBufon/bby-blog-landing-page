@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <article class="pt-32 pb-20 px-4">
+        <div class="max-w-3xl mx-auto">
+            <header class="mb-12">
+                <a href="{{ path('app_blog') }}" 
+                   class="inline-flex items-center text-indigo-400 hover:text-indigo-300 mb-6 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Voltar ao blog
+                </a>
+                
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+                    {% block post_title %}{% endblock %}
+                </h1>
+                
+                <div class="flex items-center gap-4 text-slate-400 text-sm">
+                    <time datetime="{% block post_date_iso %}{% endblock %}">
+                        {% block post_date %}{% endblock %}
+                    </time>
+                    <span>•</span>
+                    <span>Por {% block post_author %}Jonathan Bufon{% endblock %}</span>
+                </div>
+            </header>
+
+            <div class="prose prose-invert prose-lg max-w-none">
+                {% block post_content %}{% endblock %}
+            </div>
+        </div>
+    </article>
+{% endblock %}

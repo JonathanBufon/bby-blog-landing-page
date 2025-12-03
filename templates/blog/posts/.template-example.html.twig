@@ -1,0 +1,102 @@
+{% extends 'blog/post_base.html.twig' %}
+
+{# Título que aparece na aba do navegador #}
+{% block title %}Título do Post | Blog BBY Tech{% endblock %}
+
+{# Descrição para SEO (aparece nos resultados do Google) #}
+{% block description %}Descrição curta do post para SEO, máximo 160 caracteres.{% endblock %}
+
+{# Título do post que aparece na página #}
+{% block post_title %}Título do Seu Post Aqui{% endblock %}
+
+{# Data em formato ISO (YYYY-MM-DD) #}
+{% block post_date_iso %}2024-12-02{% endblock %}
+
+{# Data formatada para exibição #}
+{% block post_date %}02 de Dezembro de 2024{% endblock %}
+
+{# Opcional: Sobrescrever autor (padrão é Jonathan Bufon) #}
+{# {% block post_author %}Seu Nome{% endblock %} #}
+
+{# Conteúdo do post #}
+{% block post_content %}
+    <div class="space-y-6 text-slate-300 leading-relaxed">
+        
+        {# Parágrafo de introdução destacado #}
+        <p class="text-xl text-slate-200">
+            Parágrafo de introdução com destaque. Use para chamar atenção do leitor.
+        </p>
+
+        {# Seção 1 #}
+        <h2 class="text-3xl font-bold text-white mt-12 mb-6">Título da Seção</h2>
+        
+        <p>
+            Seu conteúdo aqui. Pode usar <strong>negrito</strong> para destacar palavras importantes.
+            Links são automaticamente estilizados: <a href="https://exemplo.com">exemplo de link</a>.
+        </p>
+
+        {# Lista não ordenada #}
+        <ul class="list-disc list-inside space-y-2 ml-4">
+            <li class="text-slate-300">Item da lista 1</li>
+            <li class="text-slate-300">Item da lista 2</li>
+            <li class="text-slate-300">Item da lista 3</li>
+        </ul>
+
+        {# Lista ordenada #}
+        <ol class="list-decimal list-inside space-y-2 ml-4">
+            <li class="text-slate-300">Primeiro passo</li>
+            <li class="text-slate-300">Segundo passo</li>
+            <li class="text-slate-300">Terceiro passo</li>
+        </ol>
+
+        {# Box de destaque (dica, nota, aviso) #}
+        <div class="bg-slate-800 border border-slate-700 rounded-lg p-6 my-8">
+            <h3 class="text-xl font-bold text-white mb-3">💡 Dica importante</h3>
+            <p class="text-slate-300">
+                Use este box para destacar informações importantes, dicas ou observações.
+            </p>
+        </div>
+
+        {# Código inline #}
+        <p>
+            Você pode usar <code>código inline</code> para destacar comandos ou variáveis.
+        </p>
+
+        {# Bloco de código #}
+        <pre><code>// Exemplo de código
+function exemplo() {
+    return "Hello World";
+}</code></pre>
+
+        {# Citação/Quote #}
+        <blockquote class="border-l-4 border-indigo-500 pl-4 italic text-slate-400 my-6">
+            "Esta é uma citação de exemplo. Use para destacar frases importantes ou citações."
+        </blockquote>
+
+        {# Imagem com legenda #}
+        {# IMPORTANTE: Crie a pasta public/images/blog/{slug-do-seu-post}/ primeiro #}
+        {# Substitua {slug-do-seu-post} pelo slug real do post #}
+        <figure class="my-8">
+            <img src="/images/blog/{slug-do-seu-post}/exemplo-imagem.webp" 
+                 alt="Descrição detalhada da imagem para acessibilidade"
+                 class="w-full rounded-lg border border-slate-700 shadow-lg"
+                 loading="lazy">
+            <figcaption class="text-sm text-slate-500 mt-2 text-center italic">
+                Legenda descritiva da imagem
+            </figcaption>
+        </figure>
+
+        {# Seção 2 #}
+        <h2 class="text-3xl font-bold text-white mt-12 mb-6">Outra Seção</h2>
+        
+        <p>
+            Continue seu conteúdo normalmente. Mantenha os parágrafos curtos e bem espaçados 
+            para melhor legibilidade.
+        </p>
+
+        {# Conclusão #}
+        <p class="text-lg font-medium text-indigo-400 mt-8">
+            Mensagem de conclusão ou call-to-action. 🚀
+        </p>
+    </div>
+{% endblock %}

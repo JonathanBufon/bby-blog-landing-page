@@ -1,0 +1,378 @@
+{% extends 'blog/post_base.html.twig' %}
+
+{% block title %}Componentes Twig no Symfony: Construindo um Design System em PHP | Blog BBY Tech{% endblock %}
+{% block description %}Descubra como criar componentes reutilizáveis em PHP usando Symfony UX Twig Component. Tutorial completo com exemplos práticos de um componente Alert.{% endblock %}
+
+{% block post_title %}Componentes Twig no Symfony: Construindo um Design System em PHP{% endblock %}
+{% block post_date_iso %}2024-12-02{% endblock %}
+{% block post_date %}02 de Dezembro de 2024{% endblock %}
+
+{% block post_content %}
+    <div class="space-y-6 text-slate-300 leading-relaxed">
+        <p class="text-xl text-slate-200">
+            Olá pessoas! Assim como um bom programador, estava em busca de conhecimento e recentemente participei de uma palestra 
+            dos meus colegas David e da Julia na <strong>IXC Soft</strong> sobre Design System — uma palestra incrível.
+        </p>
+
+        <p>
+            Para quem não conhece, um <strong>Design System</strong> é basicamente uma biblioteca de componentes reutilizáveis 
+            que mantém a consistência visual e funcional de uma aplicação. Pense em botões, alertas, modais e cards que você 
+            usa repetidamente — em vez de reescrever HTML e CSS toda vez, você cria componentes que podem ser chamados 
+            onde precisar. Isso facilita manutenção, garante consistência e acelera o desenvolvimento.
+        </p>
+
+        <p>
+            No entanto, uma curiosidade ficou na minha mente na parte de componentes. Foram citados os mais famosos frameworks 
+            como <strong>React</strong> e <strong>Vue.js</strong>, mas e PHP? Ficou para trás?
+        </p>
+
+        <h2 class="text-3xl font-bold text-white mt-12 mb-6">A Descoberta dos Twig Components</h2>
+        
+        <p>
+            Na curiosidade — já que eu nunca tinha ouvido falar em desenvolver componentes HTML em PHP — pensei em 
+            reinventar essa roda usando Twig, um local onde você consegue gerenciar e gerar componentes de forma dinâmica. 
+            Mas pesquisando um pouco, percebi que cheguei meio atrasado.
+        </p>
+
+        <p>
+            O <strong>Twig</strong> (gerenciador de templates do Symfony) já possui um pacote chamado 
+            <code>symfony/ux-twig-component</code>. A instalação é simples via Composer:
+        </p>
+
+        <pre><code>composer require symfony/ux-twig-component</code></pre>
+
+        <p>
+            Pronto! O pacote está instalado e pronto para uso. Para mais detalhes e recursos avançados, 
+            consulte a <a href="https://symfony.com/bundles/ux-twig-component/current/index.html" target="_blank" rel="noopener noreferrer">documentação oficial do Symfony UX Twig Components</a>.
+        </p>
+
+        <h2 class="text-3xl font-bold text-white mt-12 mb-6">Criando Seu Primeiro Componente</h2>
+
+        <p>
+            Agora vem o ponto interessante: com o console do Symfony você pode criar um componente, por exemplo:
+        </p>
+
+        <pre><code>php bin/console make:twig-component Alert</code></pre>
+
+        <p>
+            Esse comando cria alguns arquivos no seu projeto. Vamos falar sobre eles:
+        </p>
+
+        <ul class="list-disc list-inside space-y-2 ml-4">
+            <li class="text-slate-300"><code>src/Twig/Components/Alert.php</code></li>
+            <li class="text-slate-300"><code>templates/components/Alert.html.twig</code></li>
+        </ul>
+
+        <h2 class="text-3xl font-bold text-white mt-12 mb-6">Entendendo o Alert.php</h2>
+
+        <p>
+            Esse arquivo é a classe do componente, onde colocamos a lógica: funções, variáveis etc. 
+            Alguns pontos importantes:
+        </p>
+
+        <ul class="list-disc list-inside space-y-2 ml-4">
+            <li class="text-slate-300"><strong>Variáveis públicas:</strong> todas podem ser usadas diretamente no template do componente</li>
+            <li class="text-slate-300"><strong>Método construtor:</strong> não é <code>__construct</code>, e sim <code>mount</code>. O <code>mount</code> é chamado primeiro e funciona como um construtor ou um setUp</li>
+        </ul>
+
+        <figure class="my-8">
+            <img src="/images/blog/post-componentes-twig-02-12-2025/classe-alert-php.webp" 
+                 alt="Código completo do componente Alert.php no editor"
+                 class="w-full rounded-lg border border-slate-700 shadow-lg"
+                 loading="lazy">
+            <figcaption class="text-sm text-slate-500 mt-2 text-center italic">
+                Estrutura da classe <strong>Alert.php</strong> com validação de tipos
+            </figcaption>
+        </figure>
+
+        <div class="bg-slate-800 border border-slate-700 rounded-lg p-6 my-8">
+            <h3 class="text-xl font-bold text-white mb-3">💡 Nota Importante</h3>
+            <p class="text-slate-300 mb-3">
+                É um exemplo simples, mas funcional. Observe o <code>default</code> no switch — isso garante que 
+                se alguém passar um tipo inválido (como "danger"), o sistema lançará uma exceção clara em vez de 
+                renderizar um componente vazio. Sempre valide entradas!
+            </p>
+            <p class="text-slate-300">
+                Em produção, você poderia usar um Enum (PHP 8.1+) para os tipos ou criar constantes de classe, 
+                tornando o código ainda mais robusto.
+            </p>
+        </div>
+
+        <h2 class="text-3xl font-bold text-white mt-12 mb-6">Construindo o Template Alert.html.twig</h2>
+
+        <p>
+            Originalmente o arquivo do componente vem desta maneira:
+        </p>
+
+        <pre><code>&lt;div{{ "{{" }} attributes }}&gt;
+    &lt;!-- component HTML --&gt;
+&lt;/div&gt;</code></pre>
+
+        <p>
+            Depois de montar o HTML do componente usando um pouco de CSS e as variáveis públicas, 
+            o meu arquivo <code>Alert.html.twig</code> ficou assim:
+        </p>
+
+        <pre><code>&lt;div{{ "{{" }} attributes }}&gt;
+    &lt;style&gt;
+        .alert-custom {
+            display: block;
+            padding: 14px 18px;
+            border-radius: 8px;
+            border: 2px solid {{ "{{" }} colorText }};
+            background: {{ "{{" }} colorBackground }};
+            color: {{ "{{" }} colorText }};
+            font-family: system-ui, sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .alert-custom strong {
+            font-weight: 600;
+            margin-right: 4px;
+        }
+    &lt;/style&gt;
+
+    &lt;div class="alert-custom"&gt;
+        &lt;strong&gt;{{ "{{" }} title }}&lt;/strong&gt; {{ "{{" }} description }}
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+        <div class="bg-yellow-900/20 border border-yellow-700/50 rounded-lg p-6 my-8">
+            <h3 class="text-xl font-bold text-yellow-400 mb-3">⚠️ Importante sobre Estilização</h3>
+            <p class="text-slate-300 mb-3">
+                <strong>CSS inline aqui é apenas didático!</strong> Em produção, use TailwindCSS, classes CSS externas 
+                ou CSS Modules. Colocar <code>&lt;style&gt;</code> dentro do componente polui o HTML e dificulta manutenção.
+            </p>
+            <p class="text-slate-300">
+                Quanto à lógica, em aplicações reais você provavelmente buscaria dados de uma entidade, API ou serviço, 
+                em vez de hardcoded no componente. O objetivo aqui é mostrar a estrutura e possibilidades.
+            </p>
+        </div>
+
+        <h2 class="text-3xl font-bold text-white mt-12 mb-6">Configurando o Controller</h2>
+
+        <p>
+            Criei um controller básico só para rodar uma rota "Home":
+        </p>
+
+        <pre><code>&lt;?php
+
+namespace App\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+class HomeController extends AbstractController
+{
+    #[Route('/', name: 'home')]
+    public function home(): Response
+    {
+        return $this->render('home/home.html.twig');
+    }
+}</code></pre>
+
+        <h2 class="text-3xl font-bold text-white mt-12 mb-6">Usando o Componente no Template</h2>
+
+        <p>
+            Para chamar componentes Twig no template, existem duas formas:
+        </p>
+
+        <pre><code>&lt;twig:Alert /&gt;</code></pre>
+
+        <p>ou</p>
+
+        <pre><code>{{ "{{" }} component('Alert') }}</code></pre>
+
+        <p>
+            A comunidade costuma usar o padrão <code>&lt;twig:Alert /&gt;</code>, então mantive ele:
+        </p>
+
+        <pre><code>{{ "{%" }} extends 'base.html.twig' %}
+
+{{ "{%" }} block body %}
+
+    &lt;h1&gt;Página inicial&lt;/h1&gt;
+
+    {{ "{%" }} set return = 'info' %}
+
+    {{ "{%" }} if return == 'error' %}
+        &lt;twig:Alert type="error" /&gt;
+    {{ "{%" }} endif %}
+
+    {{ "{%" }} if return == 'warning' %}
+        &lt;twig:Alert type="warning" /&gt;
+    {{ "{%" }} endif %}
+
+    {{ "{%" }} if return == 'success' %}
+        &lt;twig:Alert type="success" /&gt;
+    {{ "{%" }} endif %}
+
+    {{ "{%" }} if return == 'info' %}
+        &lt;twig:Alert type="info" /&gt;
+    {{ "{%" }} endif %}
+
+{{ "{%" }} endblock %}</code></pre>
+
+        <h2 class="text-3xl font-bold text-white mt-12 mb-6">Os 4 Tipos de Alertas Renderizados</h2>
+
+        <p>
+            Veja como cada tipo de alerta é renderizado no navegador:
+        </p>
+
+        {# Grid de 4 imagens dos alertas #}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+            <figure>
+                <img src="/images/blog/post-componentes-twig-02-12-2025/01-alertas-renderizados.webp" 
+                     alt="Alerta tipo Info renderizado"
+                     class="w-full rounded-lg border border-slate-700 shadow-lg"
+                     loading="lazy">
+                <figcaption class="text-sm text-slate-500 mt-2 text-center italic">
+                    Alert tipo <strong>Info</strong>
+                </figcaption>
+            </figure>
+
+            <figure>
+                <img src="/images/blog/post-componentes-twig-02-12-2025/02-alertas-renderizados.webp" 
+                     alt="Alerta tipo Error renderizado"
+                     class="w-full rounded-lg border border-slate-700 shadow-lg"
+                     loading="lazy">
+                <figcaption class="text-sm text-slate-500 mt-2 text-center italic">
+                    Alert tipo <strong>Error</strong>
+                </figcaption>
+            </figure>
+
+            <figure>
+                <img src="/images/blog/post-componentes-twig-02-12-2025/03-alertas-renderizados.webp" 
+                     alt="Alerta tipo Warning renderizado"
+                     class="w-full rounded-lg border border-slate-700 shadow-lg"
+                     loading="lazy">
+                <figcaption class="text-sm text-slate-500 mt-2 text-center italic">
+                    Alert tipo <strong>Warning</strong>
+                </figcaption>
+            </figure>
+
+            <figure>
+                <img src="/images/blog/post-componentes-twig-02-12-2025/04-alertas-renderizados.webp" 
+                     alt="Alerta tipo Success renderizado"
+                     class="w-full rounded-lg border border-slate-700 shadow-lg"
+                     loading="lazy">
+                <figcaption class="text-sm text-slate-500 mt-2 text-center italic">
+                    Alert tipo <strong>Success</strong>
+                </figcaption>
+            </figure>
+        </div>
+
+        <h2 class="text-3xl font-bold text-white mt-12 mb-6">Como Funciona na Prática</h2>
+
+        <p>
+            Se você é bom em lógica, já percebeu onde isso chega. Ao alterar o valor da variável definida em 
+            <code>{{ "{%" }} set return = '' %}</code>, o componente correspondente é chamado. 
+            O valor passa para o <code>type</code>, que aciona o <code>mount()</code>, que chama a validação, 
+            define os atributos e finalmente renderiza o componente com o resultado esperado.
+        </p>
+
+        <div class="bg-slate-800 border border-slate-700 rounded-lg p-6 my-8">
+            <h3 class="text-xl font-bold text-white mb-3">🔍 Passando Variáveis</h3>
+            <p class="text-slate-300 mb-3">
+                Falando um pouco mais sobre essa chamada do componente, você já deve ter percebido que a variável 
+                <code>type</code> está sendo passada logo após <code>&lt;twig:Alert</code>. 
+                Isso é um padrão do componente.
+            </p>
+            <p class="text-slate-300">
+                Em outros casos, sem usar a função que valida o type, eu poderia ter passado todas as variantes 
+                dentro da chamada do componente, desta maneira:
+            </p>
+            <pre class="mt-3"><code>&lt;twig:Alert 
+    title="Sucesso!" 
+    description="Ação realizada com sucesso!" 
+    colorBackground="#90EE90" 
+    colorText="green" 
+/&gt;</code></pre>
+        </div>
+
+        <h2 class="text-3xl font-bold text-white mt-12 mb-6">Casos de Uso Reais</h2>
+
+        <p>
+            Mas afinal, onde usar Twig Components no dia a dia? Aqui vão alguns exemplos práticos:
+        </p>
+
+        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6 my-6">
+            <h3 class="text-lg font-bold text-white mb-4">🎯 Aplicações Práticas</h3>
+            
+            <ul class="space-y-4">
+                <li class="text-slate-300">
+                    <strong class="text-white">Sistema de Notificações:</strong> Exibir mensagens de feedback 
+                    após ações do usuário (cadastro, login, exclusão, etc). Em vez de repetir HTML em vários 
+                    templates, um simples <code>&lt;twig:Alert type="success" /&gt;</code> resolve.
+                </li>
+                
+                <li class="text-slate-300">
+                    <strong class="text-white">Validação de Formulários:</strong> Mostrar erros de validação 
+                    de forma consistente. Cada campo com erro pode renderizar um componente de alerta específico.
+                </li>
+                
+                <li class="text-slate-300">
+                    <strong class="text-white">Cards de Produtos/Notícias:</strong> Se você tem uma lista de 
+                    produtos, cards de blog ou portfólio, componentes garantem que todos terão a mesma estrutura, 
+                    facilitando mudanças futuras.
+                </li>
+                
+                <li class="text-slate-300">
+                    <strong class="text-white">Elementos de UI Reutilizáveis:</strong> Botões, badges, modais, 
+                    tooltips — qualquer coisa que se repete na sua aplicação é candidata a virar componente.
+                </li>
+                
+                <li class="text-slate-300">
+                    <strong class="text-white">Dashboards e Relatórios:</strong> Componentes de gráficos, 
+                    estatísticas e widgets que você reutiliza em diferentes páginas administrativas.
+                </li>
+            </ul>
+        </div>
+
+        <p>
+            No meu caso, já estou pensando em usar isso no <strong>Gatepass</strong> (sistema de gestão de ingressos) 
+            para padronizar alertas de validação e cards de eventos. A manutenção fica muito mais fácil quando você 
+            altera em um lugar e reflete em todo o sistema.
+        </p>
+
+        <h2 class="text-3xl font-bold text-white mt-12 mb-6">Conclusão e Próximos Passos</h2>
+
+        <p>
+            Os Twig Components provam que <strong>PHP não ficou para trás</strong> quando o assunto é Design System 
+            e componentização. Com o Symfony, temos ferramentas poderosas para criar interfaces modulares e reutilizáveis, 
+            seguindo os mesmos princípios dos frameworks JavaScript modernos.
+        </p>
+
+        <p>
+            Este foi um overview prático focado no básico. Mas há muito mais a explorar, como:
+        </p>
+
+        <ul class="list-disc list-inside space-y-2 ml-4 mb-6">
+            <li class="text-slate-300"><strong>LiveComponents:</strong> Adicionar interatividade em tempo real sem JavaScript</li>
+            <li class="text-slate-300"><strong>Computed Properties:</strong> Propriedades calculadas dinamicamente</li>
+            <li class="text-slate-300"><strong>Slots:</strong> Passar conteúdo HTML customizado para componentes</li>
+            <li class="text-slate-300"><strong>PreMount/PostMount Hooks:</strong> Controlar o ciclo de vida dos componentes</li>
+        </ul>
+
+        <div class="bg-indigo-900/20 border border-indigo-700/50 rounded-lg p-6 my-8">
+            <h3 class="text-xl font-bold text-indigo-400 mb-3">📚 Recursos Adicionais</h3>
+            <ul class="space-y-2 text-slate-300">
+                <li>
+                    📖 <a href="https://symfony.com/bundles/ux-twig-component/current/index.html" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:text-indigo-300">Documentação Oficial do Symfony UX Twig Components</a>
+                </li>
+                <li>
+                    🎬 <a href="https://symfonycasts.com/screencast/last-stack/twig-component" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:text-indigo-300">SymfonyCasts - Twig Components Tutorial</a>
+                </li>
+                <li>
+                    💡 <a href="https://ux.symfony.com/" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:text-indigo-300">Symfony UX Initiative</a> - Modernizando a experiência do usuário com Symfony
+                </li>
+            </ul>
+        </div>
+
+        <p class="text-lg font-medium text-indigo-400 mt-8">
+            Espero que tenham gostado do conteúdo. Caso queiram discutir sobre, não hesitem em comentar no post do LinkedIn. Até mais!
+        </p>
+    </div>
+{% endblock %}
